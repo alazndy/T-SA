@@ -1,10 +1,10 @@
-# T-SA - Technical Smart Assistant
+# T-SA - Teknik Şartname Analiz Platformu
 
 <div align="center">
 
 ![T-SA Logo](https://via.placeholder.com/150?text=T-SA)
 
-**AI Destekli Teknik Asistan Platformu**
+**AI Destekli Şartname Analizi ve Ürün Kıyaslama Platformu**
 
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
@@ -19,67 +19,97 @@
 
 ## 📖 Hakkında
 
-T-SA (Technical Smart Assistant), yapay zeka destekli teknik bir asistondır. Döküman analizi, proje sorgulama ve akıllı öneriler sunar. T-Ecosystem ailesinin AI uygulamasıdır.
+T-SA (Technical Specification Analyzer), **teknik şartname analiz platformudur**. İhale şartnameleri, teknik dökümanlar ve proje gereksinimlerini analiz ederek:
+
+- Gereksinim listesi çıkarır
+- Uygun ürünleri belirler
+- Alternatif ürünleri kıyaslar
+- Maliyet analizi yapar
 
 ### Neden T-SA?
 
-- 🤖 **AI Destekli Analiz**: Google Gemini Pro ile güçlendirilmiş
-- 📄 **Döküman Analizi**: PDF, DXF, datasheet parsing
-- 🔍 **Akıllı Sorgulama**: Doğal dil ile sistem sorgulama
-- 📊 **Pazar Analizi**: Fiyat ve tedarikçi karşılaştırma
-- 🔗 **Ekosistem Entegrasyonu**: UPH, ENV-I, Weave ile bağlantı
+- 📋 **Şartname Analizi**: PDF/DOCX döküman parsing
+- 🔍 **Gereksinim Çıkarma**: Teknik gereksinimleri listele
+- ⚖️ **Ürün Kıyaslama**: ENV-I ile eşleştirme ve alternatif önerme
+- 📊 **Datasheet Karşılaştırma**: Yan yana spesifikasyon analizi
+- 🔗 **Ekosistem Entegrasyonu**: ENV-I stok, UPH proje
+
+---
+
+## 🎯 Ne Yapıyor?
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  1. ŞARTNAME ANALİZİ                                       │
+│     • İhale şartnamesi PDF yükle                           │
+│     • Teknik gereksinimleri çıkar                          │
+│     • Standart/norm referanslarını tespit et               │
+│                                                             │
+│  2. GEREKSİNİM LİSTESİ                                     │
+│     • Ürün/malzeme listesi oluştur                         │
+│     • Miktar hesapla                                       │
+│     • Teknik spesifikasyonları belirle                     │
+│                                                             │
+│  3. ÜRÜN KILASLAMA                                         │
+│     • ENV-I'den uygun ürünleri eşleştir                    │
+│     • Alternatif ürün öner                                 │
+│     • Fiyat/performans karşılaştır                         │
+│                                                             │
+│  4. RAPORLAMA                                              │
+│     • Gereksinim tablosu                                   │
+│     • Ürün eşleştirme raporu                               │
+│     • Stok durumu analizi                                  │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## ✨ Özellikler
 
-### Döküman Analizi
+### Şartname Analizi
 
-- **PDF Analizi**: Teknik döküman parsing
-- **DXF Analizi**: CAD çizim yorumlama
-- **OCR**: Görsel metin tanıma
-- **BOM Çıkarımı**: Malzeme listesi oluşturma
+- PDF, DOCX, DXF format desteği
+- Görsel dosyalar için OCR
+- Sayfa aralığı seçimi
+- İteratif analiz (çoklu geçiş)
 
-### Datasheet Analizi
+### Gereksinim Çıkarma
 
-- Teknik spesifikasyon çıkarımı
-- Parametre tablolaştırma
-- Ürün karşılaştırma
-- Uyumluluk kontrolü
+- Teknik spesifikasyon tespiti
+- Miktar ve birim çıkarma
+- Standart referansları bulma
+- Kaynak sayfa numarası
 
-### Pazar Analizi
+### Ürün Kıyaslama
 
+- ENV-I envanteri ile eşleştirme
+- Uyumluluk yüzdesi hesaplama
+- Alternatif ürün önerileri
 - Fiyat karşılaştırma
-- Tedarikçi listesi
-- Alternatif ürün önerisi
-- Lead time tahmini
 
-### Proje Analizi (UPH)
+### Datasheet Karşılaştırma
 
-- Proje durumu sorgulama
-- Risk değerlendirme
-- Kaynak optimizasyonu
-- Timeline önerileri
-
-### Envanter Analizi (ENV-I)
-
-- Stok durumu sorgulama
-- Düşük stok uyarıları
-- Tüketim trendi analizi
-- Sipariş önerileri
-
-### Chat Arayüzü
-
-- Doğal dil sorgulama
-- Konuşma geçmişi
-- Dosya yükleme
-- Bağlam takibi
+- Yan yana spesifikasyon tablosu
+- Fark vurgulama
+- Güçlü/zayıf yön analizi
 
 ### Entegrasyonlar
 
-- **UPH**: Proje analizi
-- **ENV-I**: Stok sorgulama
-- **Weave**: Şematik analiz
+- **ENV-I**: Stok sorgulama, ürün eşleştirme
+- **UPH**: Proje dosya analizi
+- **Weave**: Şematik dosya analizi
+
+---
+
+## 🔍 Örnek Sorgulamalar
+
+```
+"Bu şartnameyi analiz et ve gerekli ürünleri listele"
+"IP67 gereksinimine uygun hangi kameralarımız var?"
+"HK-DS2CD2185 ile DH-IPC-HDBW2 karşılaştır"
+"Bu ürünün özellikleri şartnameye uyuyor mu?"
+"24 port PoE switch stokta var mı?"
+```
 
 ---
 
@@ -93,180 +123,49 @@ T-SA (Technical Smart Assistant), yapay zeka destekli teknik bir asistondır. D�
 | AI Engine  | Google Gemini Pro |
 | Storage    | IndexedDB         |
 | Stil       | Tailwind CSS 4    |
-| Animasyon  | Framer Motion     |
 
 ---
 
 ## 📦 Kurulum
 
-### Gereksinimler
-
-- Node.js 18+
-- pnpm
-
-### Adımlar
-
 ```bash
-# Repo'yu klonla
-git clone https://github.com/your-repo/T-SA.git
 cd T-SA/code
-
-# Bağımlılıkları yükle
 pnpm install
-
-# Geliştirme sunucusunu başlat
 pnpm dev
 ```
 
 ### Ortam Değişkenleri
 
-`.env` dosyası oluşturun:
-
 ```env
 VITE_GEMINI_API_KEY=your_gemini_api_key
 ```
 
----
-
-## 📁 Proje Yapısı
-
-```
-code/
-├── components/
-│   ├── ResultView.tsx             # Analiz sonuçları
-│   ├── ProductCard.tsx            # Ürün kartı
-│   ├── FileUpload.tsx             # Dosya yükleme
-│   ├── DatasheetComparisonModal.tsx # Datasheet karşılaştırma
-│   ├── MarketAnalysisModal.tsx    # Pazar analizi
-│   ├── RFQModal.tsx               # Teklif talebi
-│   ├── TutorialModal.tsx          # Kullanım kılavuzu
-│   ├── WelcomeScreen.tsx          # Karşılama
-│   ├── geminiService.ts           # AI servis
-│   └── types.ts                   # Tip tanımları
-├── App.tsx                        # Ana uygulama
-└── main.tsx                       # Entry point
-```
+**Port**: 5173
 
 ---
 
-## 🤖 AI Yetenekleri
+## 🎨 Örnek Kullanım
 
-### Döküman Analizi
+**Senaryo**: Fabrika güvenlik sistemi ihalesi
 
-```
-Girdi: PDF/DXF dosyası
-Çıktı:
-├── Özet
-├── Ürün listesi (BOM)
-├── Teknik spesifikasyonlar
-├── Uyarılar
-└── Öneriler
-```
-
-### Proje Sorgulama
-
-```
-Örnek Sorgular:
-├── "Fabrika Otomasyon projesinin durumu nedir?"
-├── "Bu ay hangi projeler teslim edilecek?"
-├── "Bütçe aşımı olan projeler hangileri?"
-└── "Risk skoru yüksek projeler?"
-```
-
-### Stok Sorgulama
-
-```
-Örnek Sorgular:
-├── "10kΩ direnç stokta var mı?"
-├── "Düşük stoklu ürünler hangileri?"
-├── "LM7805 için alternatif öner"
-└── "Bu ay sipariş edilmesi gereken ürünler?"
-```
-
----
-
-## 🎨 Ekran Görünümü
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  [T-SA Logo]                      [Tema] [Yeni Sohbet]  │
-├─────────────┬───────────────────────────────────────────┤
-│             │                                           │
-│ Geçmiş      │  [AI] Merhaba! Nasıl yardımcı olabilirim? │
-│             │                                           │
-│ Bugün       │            [User] Bu PDF'i analiz et      │
-│ ├─ Proje..  │                   📎 teknik.pdf           │
-│ └─ BOM..    │                                           │
-│             │  [AI] 47 ürün tespit ettim:               │
-│ Dün         │       • 23 Direnç                         │
-│ ├─ DXF..    │       • 12 Kondansatör                    │
-│ └─ Stok..   │       • 8 IC                              │
-│             │                                           │
-│             │       [Detaylı Liste] [ENV-I Export]      │
-├─────────────┼───────────────────────────────────────────┤
-│             │ [📎 Dosya] [Mesajınızı yazın...    ] [➤] │
-└─────────────┴───────────────────────────────────────────┘
-```
-
----
-
-## 📊 Analiz Sonuç Yapısı
-
-```typescript
-interface AnalysisResult {
-  id: string;
-  fileName: string;
-  summary: string;
-  products: ProductInfo[];
-  warnings: string[];
-  recommendations: string[];
-  specifications?: Record<string, string>;
-  analyzedAt: Date;
-  processingTime: number;
-}
-
-interface ProductInfo {
-  name: string;
-  model?: string;
-  manufacturer?: string;
-  quantity: number;
-  estimatedPrice?: number;
-  inStock?: boolean;
-  alternatives?: string[];
-}
-```
+1. İhale şartnamesini (PDF) yükle
+2. T-SA gereksinimleri analiz eder:
+   - Full HD çözünürlük
+   - IR gece görüşü 30m
+   - IP67 koruma sınıfı
+3. ENV-I'den uygun ürünleri eşleştirir
+4. Alternatifler ve fiyat karşılaştırması sunar
+5. Stok durumu uyarıları verir
 
 ---
 
 ## 🔗 T-Ecosystem Entegrasyonu
 
 ```
-┌─────────┐          ┌─────────┐
-│   UPH   │◄────────►│  T-SA   │◄───── AI Analiz (Merkez)
-└─────────┘          └────┬────┘
-                          │
-┌─────────┐          ┌────▼────┐
-│  ENV-I  │◄────────►│ Sorgu   │
-└─────────┘          └─────────┘
-     │
-┌────▼────┐
-│  Weave  │◄───── Şematik analiz
-└─────────┘
+UPH (Proje) ──► T-SA (Analiz) ◄── ENV-I (Stok)
+                    │
+                    └──► Rapor/BOM
 ```
-
----
-
-## 🎨 Tema Desteği
-
-- **Dark Mode**: Koyu tema (varsayılan)
-- **Light Mode**: Açık tema
-- **High Contrast**: Yüksek kontrast
-
----
-
-## 📄 Lisans
-
-Bu proje özel lisans altındadır.
 
 ---
 
