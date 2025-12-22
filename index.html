@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="T-SA" />
+    
+    <!-- PWA Manifest via Data URI -->
+    <link rel="manifest" href='data:application/manifest+json;base64,eyJuYW1lIjoiVC1TQSBBc2lzdGFuIiwic2hvcnRfbmFtZSI6IlQtU0EiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzAwMDAwMCIsInRoZW1lX2NvbG9yIjoiI0ZGNkIwMCIsImljb25zIjpbeyJzcmMiOiJodHRwczovL3VwbG9hZC53aWtpcGVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zLzgvODcvUERGX2ZpbGVfaWNvbi5zdmciLCJzaXplcyI6IjE5MngxOTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=' />
+
+    <title>T-SA | Turhan Şartname Analizi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        /* Light Mode Defaults - Clean & Corporate */
+        --bg-main: #f8fafc; /* Slate 50 */
+        --bg-panel: rgba(255, 255, 255, 0.9);
+        --bg-card: #ffffff;
+        --bg-surface: #f1f5f9; /* Slate 100 */
+        --bg-input: #ffffff;
+        
+        --text-primary: #0f172a; /* Slate 900 */
+        --text-secondary: #475569; /* Slate 600 */
+        --text-muted: #94a3b8; /* Slate 400 */
+        
+        --border-color: #e2e8f0; /* Slate 200 */
+        
+        --color-primary: #f97316; /* Orange-500 */
+        --color-secondary: #0ea5e9; /* Sky-500 */
+        --color-accent: #8b5cf6; /* Violet-500 */
+        
+        --glass-border: rgba(0,0,0,0.06);
+        --shadow-color: rgba(0,0,0,0.04);
+        --radius-panel: 1rem;
+      }
+
+      .dark {
+        /* Dark Mode Defaults - Pitch Black / Ultra OLED */
+        --bg-main: #000000; /* Pure Black */
+        --bg-panel: rgba(10, 10, 10, 0.85); /* Almost Black Glass */
+        --bg-card: rgba(18, 18, 18, 0.6); /* Very Dark Gray */
+        --bg-surface: #0a0a0a; /* Off-Black */
+        --bg-input: #050505; /* Deep Black Input */
+        
+        --text-primary: #f4f4f5; /* Zinc 100 */
+        --text-secondary: #a1a1aa; /* Zinc 400 */
+        --text-muted: #52525b; /* Zinc 600 */
+        
+        --border-color: #1f1f22; /* Darker border for black bg */
+        
+        --color-primary: #fb923c; /* Orange-400 */
+        --color-secondary: #38bdf8; /* Sky-400 */
+        --color-accent: #a78bfa; /* Violet-400 */
+        
+        --glass-border: rgba(255, 255, 255, 0.06);
+        --shadow-color: rgba(0,0,0,0.8);
+      }
+
+      .contrast {
+        /* High Contrast Mode */
+        --bg-main: #000000;
+        --bg-panel: #000000;
+        --bg-card: #000000;
+        --bg-surface: #000000;
+        --bg-input: #121212;
+        
+        --text-primary: #ffffff;
+        --text-secondary: #ffff00;
+        --text-muted: #00ff00;
+        
+        --border-color: #ffffff;
+        
+        --color-primary: #00ffff;
+        --color-secondary: #ff00ff;
+        --color-accent: #ffff00;
+        
+        --glass-border: #ffffff;
+        --shadow-color: rgba(0,0,0,0);
+        --radius-panel: 0px;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        transition: background-color 0.4s ease, color 0.4s ease;
+        overscroll-behavior-y: none;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      /* Subtle ambient background for Dark Mode - Reduced opacity for blacker feel */
+      .dark body::before {
+        content: '';
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 50% 50%, rgba(251, 146, 60, 0.02), transparent 40%),
+                    radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.02), transparent 40%);
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /* Refined Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-color); 
+        border-radius: 99px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted); 
+      }
+
+      /* Glass Utilities - More Corporate/Clean */
+      .glass-panel {
+        background: var(--bg-panel);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px var(--shadow-color);
+      }
+      
+      .glass-card {
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 1px 2px 0 var(--shadow-color);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+      
+      .glass-card:hover {
+        border-color: var(--border-color);
+        box-shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px var(--shadow-color);
+        transform: translateY(-1px);
+      }
+      
+      .contrast .glass-panel, .contrast .glass-card {
+        border-width: 2px;
+        backdrop-filter: none;
+        box-shadow: none;
+        transform: none;
+      }
+
+      /* Utilities */
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      
+      .text-balance { text-wrap: balance; }
+
+      .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+      .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+      .tech-note {
+        text-decoration: underline;
+        text-decoration-color: var(--color-primary);
+        text-decoration-style: wavy;
+        text-decoration-thickness: 1px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              theme: {
+                bg: 'var(--bg-main)',
+                panel: 'var(--bg-panel)',
+                card: 'var(--bg-card)',
+                surface: 'var(--bg-surface)',
+                input: 'var(--bg-input)',
+                text: 'var(--text-primary)',
+                secondary: 'var(--text-secondary)',
+                muted: 'var(--text-muted)',
+                border: 'var(--border-color)',
+              },
+              neon: {
+                orange: 'var(--color-primary)',
+                blue: 'var(--color-secondary)',
+                purple: 'var(--color-accent)',
+              },
+            },
+            boxShadow: {
+              'glow': '0 0 20px -5px var(--color-primary)',
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "jspdf": "https://esm.sh/jspdf@2.5.1",
+    "jspdf-autotable": "https://esm.sh/jspdf-autotable@3.8.1",
+    "xlsx": "https://esm.sh/xlsx@0.18.5",
+    "jszip": "https://esm.sh/jszip@3.10.1",
+    "idb": "https://esm.sh/idb@7.1.1"
+  }
+}
+</script>
+</head>
+  <body class="antialiased selection:bg-neon-orange selection:text-white">
+    <div id="root"></div>
+  </body>
+</html>
