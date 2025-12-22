@@ -11,9 +11,10 @@ interface ResultViewProps {
   onReset: () => void;
   onSave: () => void;
   pdfUrl: string | null;
+  onSaveToUPH?: () => void;
 }
 
-const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl }) => {
+const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl, onSaveToUPH }) => {
   const [localResult, setLocalResult] = useState<AnalysisResult>(result);
   const [activeTab, setActiveTab] = useState<'products' | 'general'>('products');
   const [searchTerm, setSearchTerm] = useState('');
@@ -318,6 +319,15 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
              </div>
              
              <div className="flex gap-2">
+                {onSaveToUPH && (
+                   <button 
+                     onClick={onSaveToUPH} 
+                     className="px-4 py-1.5 text-xs font-bold bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-all flex items-center gap-2" 
+                     title="UPH'a Gönder"
+                   >
+                     <Zap className="w-3.5 h-3.5" /> UPH'a Gönder
+                   </button>
+                )}
                 <button onClick={handleDownloadZIP} className="p-2 text-theme-text bg-theme-card border border-theme-border rounded-lg hover:bg-theme-surface" title="İndir"><Download className="w-4 h-4" /></button>
                 <button onClick={handleSaveWrapper} className="p-2 text-theme-text bg-theme-card border border-theme-border rounded-lg hover:bg-theme-surface" title="Kaydet"><Save className="w-4 h-4" /></button>
              </div>

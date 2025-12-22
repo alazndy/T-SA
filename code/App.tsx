@@ -24,6 +24,7 @@ const App: React.FC = () => {
   const [savedAnalyses, setSavedAnalyses] = useState<AnalysisResult[]>([]);
   const [progressMsg, setProgressMsg] = useState<string>("");
   const [showTutorial, setShowTutorial] = useState(false);
+  const [integrationContext, setIntegrationContext] = useState<{ projectId: string; source: string } | null>(null);
   
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
@@ -48,6 +49,34 @@ const App: React.FC = () => {
         setSavedAnalyses(analyses);
         const tutorialSeen = localStorage.getItem('tsa_tutorial_seen');
         if (tutorialSeen !== 'true') setShowTutorial(true);
+
+        // UPH Integration Check
+        const params = new URLSearchParams(window.location.search);
+        const integrate = params.get('integrate');
+        const fileUrl = params.get('fileUrl');
+        const fileName = params.get('fileName');
+        const projectId = params.get('projectId');
+
+        if (integrate === 'tsa' && fileUrl && projectId) {
+          setIntegrationContext({ projectId, source: 'uph' });
+          setAppState(AppState.ANALYZING);
+          setProgressMsg("Entegrasyon verileri yükleniyor...");
+          
+          try {
+            const response = await fetch(fileUrl);
+            const blob = await response.blob();
+            const file = new File([blob], fileName || 'integrated_file.pdf', { type: blob.type });
+            
+            // Auto-trigger analysis
+            setTimeout(() => {
+                handleFileSelect(file, { isIterative: false });
+            }, 500);
+          } catch (fetchErr) {
+            console.error("Entegrasyon dosyası yüklenemedi", fetchErr);
+            setErrorMessage("Entegrasyon dosyası yüklenemedi.");
+            setAppState(AppState.ERROR);
+          }
+        }
       } catch (e) {
         console.error("Başlangıç verileri yüklenemedi", e);
       }
@@ -157,6 +186,29 @@ const App: React.FC = () => {
     setAppState(AppState.IDLE);
     setAnalysisResult(null);
     setErrorMessage(null);
+  };
+
+  const handleSaveToUPH = () => {
+    if (!analysisResult || !integrationContext) return;
+    
+    // Simulate sending back to UPH
+    // In a real app, we would upload the report to storage and send the URL
+    // Here we use postMessage if window.opener exists, or redirect with a mock result
+    const data = {
+      type: 'TSA_ANALYSIS_RESULT',
+      projectId: integrationContext.projectId,
+      result: analysisResult,
+      timestamp: new Date().toISOString()
+    };
+
+    if (window.opener) {
+      window.opener.postMessage(data, '*');
+      alert("Analiz raporu UPH'a başarıyla gönderildi!");
+    } else {
+      // Fallback: Deep link back to UPH if possible (mocked)
+      const uphUrl = `http://localhost:3001/projects/${integrationContext.projectId}?integrated_result=tsa`;
+      window.location.href = uphUrl;
+    }
   };
 
   return (
