@@ -3,6 +3,7 @@ import { AnalysisResult, AppState } from './types';
 import FileUpload from './components/FileUpload';
 import ResultView from './components/ResultView';
 import TutorialModal from './components/TutorialModal';
+import { WelcomeScreen } from './components/WelcomeScreen';
 import { analyzeTechnicalPdf, performIterativeAnalysis } from './services/geminiService';
 import { saveAnalysis, getAllAnalyses, deleteAnalysis, migrateFromLocalStorage } from './services/dbService';
 import { 
@@ -25,6 +26,19 @@ const App: React.FC = () => {
   const [progressMsg, setProgressMsg] = useState<string>("");
   const [showTutorial, setShowTutorial] = useState(false);
   const [integrationContext, setIntegrationContext] = useState<{ projectId: string; source: string } | null>(null);
+  
+  // Welcome screen state
+  const [showWelcome, setShowWelcome] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('tsa_welcome_dismissed') !== 'true';
+    }
+    return true;
+  });
+
+  const handleCloseWelcome = () => {
+    localStorage.setItem('tsa_welcome_dismissed', 'true');
+    setShowWelcome(false);
+  };
   
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
@@ -195,7 +209,7 @@ const App: React.FC = () => {
     // In a real app, we would upload the report to storage and send the URL
     // Here we use postMessage if window.opener exists, or redirect with a mock result
     const data = {
-      type: 'TSA_ANALYSIS_RESULT',
+      type: 'tsa_result',
       projectId: integrationContext.projectId,
       result: analysisResult,
       timestamp: new Date().toISOString()
@@ -206,13 +220,22 @@ const App: React.FC = () => {
       alert("Analiz raporu UPH'a başarıyla gönderildi!");
     } else {
       // Fallback: Deep link back to UPH if possible (mocked)
-      const uphUrl = `http://localhost:3001/projects/${integrationContext.projectId}?integrated_result=tsa`;
+      const uphUrl = `http://localhost:3001/projects/${integrationContext.projectId}?integrated_result=tsa&data=${encodeURIComponent(JSON.stringify(analysisResult))}`;
       window.location.href = uphUrl;
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-foreground bg-background selection:bg-primary/30 selection:text-white">
+      
+      {showWelcome && (
+        <WelcomeScreen 
+          onNewChat={handleCloseWelcome}
+          onAnalyzeDocument={handleCloseWelcome}
+          onSettings={handleCloseWelcome}
+          onClose={handleCloseWelcome}
+        />
+      )}
       
       <TutorialModal isOpen={showTutorial} onClose={handleCloseTutorial} />
 
@@ -367,6 +390,7 @@ const App: React.FC = () => {
                       onReset={handleReset} 
                       onSave={handleSaveToHistory}
                       pdfUrl={pdfUrl} 
+                      onSaveToUPH={handleSaveToUPH}
                     />
                 </motion.div>
             )}

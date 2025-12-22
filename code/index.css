@@ -26,6 +26,15 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   
+  --color-theme-bg: var(--background);
+  --color-theme-text: var(--foreground);
+  --color-theme-card: var(--card);
+  --color-theme-secondary: var(--secondary-foreground);
+  --color-theme-muted: var(--muted-foreground);
+  --color-theme-border: var(--border);
+  --color-theme-input: var(--input);
+  --color-theme-panel: var(--glass-bg);
+
   --animate-gradient: gradient 15s ease infinite;
 
   @keyframes gradient {
