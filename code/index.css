@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  --animate-gradient: gradient 15s ease infinite;
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+}
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(20 10% 3.9%);
+  --card: hsl(0 0% 100% / 0.7);
+  --card-foreground: hsl(20 10% 3.9%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(20 10% 3.9%);
+  --primary: hsl(24 95% 53%); /* Tech Orange */
+  --primary-foreground: hsl(0 0% 98%);
+  --secondary: hsl(24 10% 96%);
+  --secondary-foreground: hsl(24 10% 3.9%);
+  --muted: hsl(24 10% 96%);
+  --muted-foreground: hsl(24 10% 45%);
+  --accent: hsl(24 95% 53% / 0.08);
+  --accent-foreground: hsl(24 95% 53%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(24 10% 90%);
+  --input: hsl(24 10% 90%);
+  --ring: hsl(24 95% 53%);
+  --radius: 1rem;
+
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-shadow: rgba(0, 0, 0, 0.02);
+}
+
+.dark {
+  --background: hsl(0 0% 0%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(240 10% 7% / 0.5);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(240 10% 4%);
+  --popover-foreground: hsl(0 0% 98%);
+  --primary: hsl(24 95% 53%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(240 5% 10%);
+  --secondary-foreground: hsl(0 0% 98%);
+  --muted: hsl(240 5% 10%);
+  --muted-foreground: hsl(240 5% 65%);
+  --accent: hsl(24 95% 53% / 0.15);
+  --accent-foreground: hsl(24 95% 53%);
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 5% 10%);
+  --input: hsl(240 5% 10%);
+  --ring: hsl(24 95% 53%);
+
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.2);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground min-h-screen antialiased selection:bg-primary/30 selection:text-white;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* Ambient Background Blobs (Orange Theme) */
+  body::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: 20%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, hsla(24, 95%, 53%, 0.1) 0%, transparent 70%);
+    filter: blur(150px);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  body::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, hsla(0, 95%, 53%, 0.05) 0%, transparent 70%);
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 30px var(--glass-shadow);
+    @apply transition-all duration-300;
+  }
+
+  .glass-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    @apply shadow-lg transition-all duration-500 rounded-2xl;
+  }
+  
+  .glass-card:hover {
+    @apply -translate-y-[5px] scale-[1.01];
+    border-color: hsla(24, 95%, 53%, 0.4);
+    box-shadow: 0 10px 40px -10px hsla(24, 95%, 53%, 0.2);
+  }
+}
