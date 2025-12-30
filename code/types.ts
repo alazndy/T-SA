@@ -19,6 +19,14 @@ export interface GeneralProvisions {
   otherTerms: string;
 }
 
+export interface Requirement {
+  reqId: string; // e.g. "R-001", "REQ-1.2"
+  description: string; // Full text of the requirement
+  category: string; // "Functional", "Performance", "Safety", "Interface"
+  criticality: 'Mandatory' | 'Desirable' | 'Optional';
+  sourceReference: string; // e.g. "Section 4.1"
+}
+
 export interface MarketAnalysisResult {
   content: string; // Rich text analysis from Gemini
   sources: { title: string; uri: string }[]; // Links from Google Search grounding
@@ -43,6 +51,7 @@ export interface AnalysisResult {
   fileName: string;
   timestamp: string;
   products: Product[];
+  requirements?: Requirement[];
   generalProvisions?: GeneralProvisions;
   summary: string;
 }

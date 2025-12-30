@@ -112,6 +112,18 @@ const GENERAL_PROVISIONS_SCHEMA: Schema = {
   required: ["warrantyConditions", "maintenanceRequirements"]
 };
 
+const REQUIREMENT_SCHEMA: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    reqId: { type: Type.STRING, description: "Gereksinim kimliği (örn: 'R-001', 'REQ-GÜV-02'). Sıralı ver." },
+    description: { type: Type.STRING, description: "Gereksinimin tam metni. '...malı/meli' cümlelerini koru." },
+    category: { type: Type.STRING, description: "Kategori (örn: 'Fonksiyonel', 'Performans', 'Arayüz', 'Güvenlik')" },
+    criticality: { type: Type.STRING, description: "Önem derecesi", enum: ["Mandatory", "Desirable", "Optional"] },
+    sourceReference: { type: Type.STRING, description: "Dökümandaki yeri (Madde No, Sayfa No)" }
+  },
+  required: ["reqId", "description", "category", "criticality", "sourceReference"]
+};
+
 const ANALYSIS_RESPONSE_SCHEMA: Schema = {
   type: Type.OBJECT,
   properties: {
@@ -119,6 +131,11 @@ const ANALYSIS_RESPONSE_SCHEMA: Schema = {
     products: {
       type: Type.ARRAY,
       items: PRODUCT_SCHEMA
+    },
+    requirements: {
+      type: Type.ARRAY,
+      items: REQUIREMENT_SCHEMA,
+      description: "Dökümandaki tüm "meli/malı" içeren teknik ve idari gereksinimlerin listesi."
     },
     generalProvisions: GENERAL_PROVISIONS_SCHEMA
   },
@@ -194,6 +211,8 @@ export const analyzeTechnicalPdf = async (base64Data: string, mimeType: string, 
 
     return {
       products,
+      products,
+      requirements: json.requirements || [],
       summary: json.summary || "Analiz tamamlandı.",
       generalProvisions: json.generalProvisions
     };

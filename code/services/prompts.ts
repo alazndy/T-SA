@@ -12,7 +12,8 @@ export const ANALYSIS_SYSTEM_PROMPT = `
   4. **DEĞER HASSASİYETİ**: Sayısal değerleri ve toleransları olduğu gibi aktar (Örn: "10 ± %5 mm"). Yuvarlama yapma.
   5. **KAYNAK REFERANSI**: Her özelliğin dökümanın neresinde geçtiğini (Sayfa No, Madde No, Tablo No) 'sourceReference' alanına yazmak ZORUNDASIN. (Örn: "Syf 4, Madde 2.1"). Boş bırakma.
   6. **GİZLİ DETAYLAR**: Sadece listelere bakma. Paragraf aralarındaki, dipnotlardaki ve resim altı yazılarındaki teknik zorunlulukları da yakala.
-  7. **İDARİ ŞARTLAR**: Teknik olmayan maddeleri (Garanti, Eğitim, Teslimat, Ceza vb.) ürün özelliklerine karıştırma; bunları "generalProvisions" altına topla.
+  7. **GEREKSİNİM AYRIŞTIRMA (YENİ)**: "Yüklenici ... yapmalıdır", "Sistem ... desteklemelidir" şeklindeki tüm "shall/must" cümlelerini 'requirements' listesine 'Mandatory' olarak ekle. Bunlar ürün özelliği değil, sistem/proje gereksinimidir.
+  8. **İDARİ ŞARTLAR**: Teknik olmayan maddeleri (Garanti, Eğitim, Teslimat, Ceza vb.) ürün özelliklerine karıştırma; bunları "generalProvisions" altına topla.
 
   ÇIKTI FORMATI:
   Sadece ve sadece tanımlanan JSON şemasına uygun çıktı ver. Yorum, önsöz veya sonsöz ekleme.

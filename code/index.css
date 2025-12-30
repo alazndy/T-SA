@@ -46,25 +46,25 @@
 
 :root {
   --background: hsl(0 0% 100%);
-  --foreground: hsl(20 10% 3.9%);
-  --card: hsl(0 0% 100% / 0.7);
-  --card-foreground: hsl(20 10% 3.9%);
+  --foreground: hsl(240 10% 3.9%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(240 10% 3.9%);
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(20 10% 3.9%);
-  --primary: hsl(24 95% 53%); /* Tech Orange */
-  --primary-foreground: hsl(0 0% 98%);
-  --secondary: hsl(24 10% 96%);
-  --secondary-foreground: hsl(24 10% 3.9%);
-  --muted: hsl(24 10% 96%);
-  --muted-foreground: hsl(24 10% 45%);
-  --accent: hsl(24 95% 53% / 0.08);
-  --accent-foreground: hsl(24 95% 53%);
+  --popover-foreground: hsl(240 10% 3.9%);
+  --primary: hsl(142 76% 36%); /* Emerald for T-Ecosystem Standard */
+  --primary-foreground: hsl(355.7 100% 97.3%);
+  --secondary: hsl(240 4.8% 95.9%);
+  --secondary-foreground: hsl(240 5.9% 10%);
+  --muted: hsl(240 4.8% 95.9%);
+  --muted-foreground: hsl(240 3.8% 46.1%);
+  --accent: hsl(240 4.8% 95.9%);
+  --accent-foreground: hsl(240 5.9% 10%);
   --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(0 0% 100%);
-  --border: hsl(24 10% 90%);
-  --input: hsl(24 10% 90%);
-  --ring: hsl(24 95% 53%);
-  --radius: 1rem;
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 5.9% 90%);
+  --input: hsl(240 5.9% 90%);
+  --ring: hsl(142 76% 36%);
+  --radius: 0.5rem;
 
   --glass-bg: rgba(255, 255, 255, 0.4);
   --glass-border: rgba(0, 0, 0, 0.05);
@@ -72,29 +72,29 @@
 }
 
 .dark {
-  --background: hsl(0 0% 0%);
+  --background: hsl(240 10% 3.9%);
   --foreground: hsl(0 0% 98%);
-  --card: hsl(240 10% 7% / 0.5);
+  --card: hsl(240 10% 3.9%);
   --card-foreground: hsl(0 0% 98%);
-  --popover: hsl(240 10% 4%);
+  --popover: hsl(240 10% 3.9%);
   --popover-foreground: hsl(0 0% 98%);
-  --primary: hsl(24 95% 53%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(240 5% 10%);
+  --primary: hsl(142 76% 36%);
+  --primary-foreground: hsl(144 80% 10%);
+  --secondary: hsl(240 3.7% 15.9%);
   --secondary-foreground: hsl(0 0% 98%);
-  --muted: hsl(240 5% 10%);
-  --muted-foreground: hsl(240 5% 65%);
-  --accent: hsl(24 95% 53% / 0.15);
-  --accent-foreground: hsl(24 95% 53%);
-  --destructive: hsl(0 84% 60%);
+  --muted: hsl(240 3.7% 15.9%);
+  --muted-foreground: hsl(240 5% 64.9%);
+  --accent: hsl(240 3.7% 15.9%);
+  --accent-foreground: hsl(0 0% 98%);
+  --destructive: hsl(0 62.8% 30.6%);
   --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(240 5% 10%);
-  --input: hsl(240 5% 10%);
-  --ring: hsl(24 95% 53%);
+  --border: hsl(240 3.7% 15.9%);
+  --input: hsl(240 3.7% 15.9%);
+  --ring: hsl(142 76% 36%);
 
-  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-bg: rgba(0, 0, 0, 0.2);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: rgba(0, 0, 0, 0.2);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
 }
 
 @layer base {
@@ -107,7 +107,7 @@
     overflow-x: hidden;
   }
   
-  /* Ambient Background Blobs (Orange Theme) */
+  /* Ambient Background Blobs (Emerald Theme) */
   body::before {
     content: '';
     position: absolute;
@@ -115,7 +115,7 @@
     left: 20%;
     width: 800px;
     height: 800px;
-    background: radial-gradient(circle, hsla(24, 95%, 53%, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, hsla(142, 76%, 36%, 0.1) 0%, transparent 70%);
     filter: blur(150px);
     pointer-events: none;
     z-index: -1;
@@ -128,7 +128,7 @@
     right: -10%;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, hsla(0, 95%, 53%, 0.05) 0%, transparent 70%);
+    background: radial-gradient(circle, hsla(160, 80%, 40%, 0.05) 0%, transparent 70%);
     filter: blur(120px);
     pointer-events: none;
     z-index: -1;

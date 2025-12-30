@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AnalysisResult, Product, MarketSearchPreferences } from '../types';
 import ProductCard from './ProductCard';
 import DatasheetComparisonPanel from './DatasheetComparisonModal';
-import { Download, Save, List, UploadCloud, Search, Filter, ShieldAlert, Layers, ChevronLeft, Briefcase, Play, Loader2, FileText, X, Globe, MapPin, Target, Square, ArrowRight, CheckCircle2, Zap } from 'lucide-react';
-import { performMarketSearchStream } from '../services/geminiService';
+import { Download, Save, Layers, ChevronLeft, Play, Loader2, FileText, X, Globe, MapPin, Target, Square, ArrowRight, CheckCircle2, Zap, UploadCloud, Search, Filter, ShieldAlert } from 'lucide-react';
 import { generateReportZip } from '../services/exportService';
+import { useBulkAnalysis } from '../hooks/useBulkAnalysis';
+import { useProductFilter } from '../hooks/useProductFilter';
 
 interface ResultViewProps {
   result: AnalysisResult;
@@ -16,201 +17,53 @@ interface ResultViewProps {
 
 const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl, onSaveToUPH }) => {
   const [localResult, setLocalResult] = useState<AnalysisResult>(result);
-  const [activeTab, setActiveTab] = useState<'products' | 'general'>('products');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isRegexMode, setIsRegexMode] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('Tümü');
-  const [showCriticalOnly, setShowCriticalOnly] = useState(false);
-  const [showWithStandardsOnly, setShowWithStandardsOnly] = useState(false);
+  const [activeTab, setActiveTab] = useState<'products' | 'general' | 'requirements'>('products');
   const [comparingProduct, setComparingProduct] = useState<Product | null>(null);
-  
-  // Bulk Analysis State
-  const [isBulkAnalyzing, setIsBulkAnalyzing] = useState(false);
-  const [bulkQueue, setBulkQueue] = useState<Product[]>([]);
-  const [bulkIndex, setBulkIndex] = useState(0);
-  const [waitingForNext, setWaitingForNext] = useState(false);
-  const [currentAnalyzingId, setCurrentAnalyzingId] = useState<string | null>(null);
   const [showBulkConfig, setShowBulkConfig] = useState(false);
-  
-  // Auto Advance State
-  const [autoAdvance, setAutoAdvance] = useState(false);
-  const autoAdvanceRef = useRef(false);
-
-  // Sync ref with state to access latest value inside async loops
-  useEffect(() => {
-    autoAdvanceRef.current = autoAdvance;
-  }, [autoAdvance]);
-  
-  // Use ref to handle stop signal immediately without closure issues
-  const stopBulkRef = useRef(false);
-
   const [bulkPrefs, setBulkPrefs] = useState<MarketSearchPreferences>({
       region: 'Global',
       priority: 'Balanced',
       additionalNotes: ''
   });
 
-  const categories = useMemo(() => {
-    const cats = new Set(localResult.products.map(p => p.category));
-    return ['Tümü', ...Array.from(cats).sort()];
-  }, [localResult.products]);
-
-  const filteredProducts = useMemo(() => {
-    return localResult.products.filter(product => {
-      const searchLower = searchTerm.toLowerCase();
-      let regex: RegExp | null = null;
-      if (isRegexMode && searchTerm) {
-        try { regex = new RegExp(searchTerm, 'i'); } catch (e) { return false; }
-      }
-
-      const checkMatch = (text?: string | null) => {
-        if (!text) return false;
-        if (regex) return regex.test(text);
-        return text.toLowerCase().includes(searchLower);
-      };
-
-      const hasMatchingSpec = product.specifications.some(spec => 
-        checkMatch(spec.sourceReference) || checkMatch(spec.parameter) || checkMatch(spec.value)
-      );
-
-      return (
-        (checkMatch(product.name) || checkMatch(product.partNumber) || hasMatchingSpec) &&
-        (selectedCategory === 'Tümü' || product.category === selectedCategory) &&
-        (!showCriticalOnly || product.specifications.some(s => s.criticality === 'Essential')) &&
-        (!showWithStandardsOnly || product.complianceStandards.length > 0)
-      );
-    });
-  }, [localResult.products, searchTerm, isRegexMode, selectedCategory, showCriticalOnly, showWithStandardsOnly]);
+  // --- Logic Extraction w/ Hooks ---
+  const { 
+      searchTerm, setSearchTerm,
+      isRegexMode, setIsRegexMode,
+      selectedCategory, setSelectedCategory,
+      showCriticalOnly, setShowCriticalOnly,
+      categories,
+      filteredProducts 
+  } = useProductFilter({ products: localResult.products });
 
   const handleProductUpdate = (updatedProduct: Product) => {
       const updatedProducts = localResult.products.map(p => 
           p.id === updatedProduct.id ? updatedProduct : p
       );
       setLocalResult({ ...localResult, products: updatedProducts });
-      // Also update the queue item reference if we are in bulk mode to keep sync
-      if (isBulkAnalyzing) {
-          const qIndex = bulkQueue.findIndex(p => p.id === updatedProduct.id);
-          if (qIndex > -1) {
-              const newQueue = [...bulkQueue];
-              newQueue[qIndex] = updatedProduct;
-              setBulkQueue(newQueue);
-          }
-      }
       onSave(); 
   };
 
-  const handleSaveWrapper = () => {
-      onSave(); 
-  };
+  const {
+      isBulkAnalyzing,
+      bulkQueue,
+      bulkIndex,
+      waitingForNext,
+      currentAnalyzingId,
+      autoAdvance,
+      setAutoAdvance,
+      startBulkSession,
+      stopBulkSession,
+      handleNextStep
+  } = useBulkAnalysis({ 
+      products: localResult.products, 
+      onProductUpdate: handleProductUpdate 
+  });
 
-  // --- BULK ANALYSIS LOGIC START ---
-
-  const handleStartBulkSession = () => {
+  const handleStartBulk = () => {
     setShowBulkConfig(false);
-    setIsBulkAnalyzing(true);
-    setBulkQueue(filteredProducts); // Snapshot the current list
-    setBulkIndex(0);
-    setWaitingForNext(false);
-    stopBulkRef.current = false;
-    
-    // Start processing the first item
-    processBulkItem(0, filteredProducts);
+    startBulkSession(filteredProducts);
   };
-
-  const processBulkItem = async (index: number, queue: Product[]) => {
-    if (stopBulkRef.current) {
-        setIsBulkAnalyzing(false);
-        return;
-    }
-
-    if (index >= queue.length) {
-        setIsBulkAnalyzing(false);
-        alert("Toplu analiz tamamlandı.");
-        return;
-    }
-
-    const prod = queue[index];
-    setBulkIndex(index);
-
-    // If already analyzed, skip automatically to the next one
-    if (prod.marketAnalysis) {
-        processBulkItem(index + 1, queue);
-        return;
-    }
-
-    // Start Analysis for this item
-    setCurrentAnalyzingId(prod.id);
-    
-    try {
-        const stream = performMarketSearchStream(prod, bulkPrefs);
-        let content = "";
-        let sources: any[] = [];
-        
-        for await (const chunk of stream) {
-            if (stopBulkRef.current) break;
-            content += chunk.text;
-            if (chunk.groundingMetadata?.groundingChunks) {
-                  sources = [...sources, ...chunk.groundingMetadata.groundingChunks.map((c:any) => c.web ? { title: c.web.title, uri: c.web.uri } : null).filter((s:any) => s)];
-            }
-        }
-        
-        const uniqueSources = Array.from(new Map(sources.map((s:any) => [s.uri, s])).values());
-        
-        if (!stopBulkRef.current) {
-            // Update product
-            const newProd = { ...prod, marketAnalysis: { content, sources: uniqueSources as any[] } };
-            
-            // Update Local State
-            setLocalResult(prev => ({
-                ...prev,
-                products: prev.products.map(p => p.id === newProd.id ? newProd : p)
-            }));
-            
-            // Update Queue Reference
-            const newQueue = [...queue];
-            newQueue[index] = newProd;
-            setBulkQueue(newQueue);
-
-            setCurrentAnalyzingId(null);
-
-            // AUTO ADVANCE LOGIC
-            if (autoAdvanceRef.current) {
-                // Wait briefly for UX (so user sees success state) then move on
-                setTimeout(() => {
-                    if (!stopBulkRef.current) {
-                        processBulkItem(index + 1, newQueue);
-                    }
-                }, 1500);
-            } else {
-                // Wait for user confirmation
-                setWaitingForNext(true);
-            }
-        } else {
-            setCurrentAnalyzingId(null);
-        }
-
-    } catch (e) { 
-        console.error(`Error analyzing ${prod.name}`, e); 
-        // Even on error, we pause so user can see it failed (or we could skip)
-        // Let's pause to allow retry or skip
-        setCurrentAnalyzingId(null);
-        setWaitingForNext(true);
-    }
-  };
-
-  const handleNextBulkStep = () => {
-      setWaitingForNext(false);
-      processBulkItem(bulkIndex + 1, bulkQueue);
-  };
-
-  const handleStopBulk = () => {
-      stopBulkRef.current = true;
-      setIsBulkAnalyzing(false);
-      setCurrentAnalyzingId(null);
-      setWaitingForNext(false);
-  };
-
-  // --- BULK ANALYSIS LOGIC END ---
 
   const handleDownloadZIP = async () => {
     try { await generateReportZip(localResult); } catch (e) { alert("Rapor hatası."); }
@@ -266,7 +119,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
               </div>
               <div className="p-4 bg-theme-surface border-t border-theme-border flex justify-end">
                  <button 
-                   onClick={handleStartBulkSession}
+                   onClick={handleStartBulk}
                    className="flex items-center px-4 py-2 bg-theme-text text-theme-bg font-bold rounded-lg hover:opacity-90"
                  >
                     <Play className="w-4 h-4 mr-2" /> Analizi Başlat
@@ -316,6 +169,12 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                 >
                   Genel Şartlar
                 </button>
+                <button 
+                  onClick={() => setActiveTab('requirements')} 
+                  className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'requirements' ? 'bg-theme-card text-theme-text shadow-sm' : 'text-theme-muted hover:text-theme-secondary'}`}
+                >
+                  Gereksinimler
+                </button>
              </div>
              
              <div className="flex gap-2">
@@ -329,7 +188,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                    </button>
                 )}
                 <button onClick={handleDownloadZIP} className="p-2 text-theme-text bg-theme-card border border-theme-border rounded-lg hover:bg-theme-surface" title="İndir"><Download className="w-4 h-4" /></button>
-                <button onClick={handleSaveWrapper} className="p-2 text-theme-text bg-theme-card border border-theme-border rounded-lg hover:bg-theme-surface" title="Kaydet"><Save className="w-4 h-4" /></button>
+                <button onClick={() => onSave()} className="p-2 text-theme-text bg-theme-card border border-theme-border rounded-lg hover:bg-theme-surface" title="Kaydet"><Save className="w-4 h-4" /></button>
              </div>
         </div>
 
@@ -370,6 +229,50 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                       </div>
                    ) : <div className="text-center p-10 text-theme-muted">Genel şart bulunamadı.</div>}
                 </div>
+            ) : activeTab === 'requirements' ? (
+                <div className="p-6 overflow-y-auto custom-scrollbar h-full space-y-4">
+                    {localResult.requirements && localResult.requirements.length > 0 ? (
+                        <div className="border border-theme-border rounded-lg overflow-hidden">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-theme-surface text-theme-secondary uppercase text-xs font-bold">
+                                    <tr>
+                                        <th className="px-4 py-3">ID</th>
+                                        <th className="px-4 py-3">Kategori</th>
+                                        <th className="px-4 py-3">Gereksinim</th>
+                                        <th className="px-4 py-3">Önem</th>
+                                        <th className="px-4 py-3 text-right">Ref</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-theme-border/50">
+                                    {localResult.requirements.map((req, idx) => (
+                                        <tr key={idx} className="hover:bg-theme-surface/50 transition-colors">
+                                            <td className="px-4 py-3 font-mono text-xs text-theme-muted">{req.reqId}</td>
+                                            <td className="px-4 py-3">
+                                                <span className="bg-theme-input px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">{req.category}</span>
+                                            </td>
+                                            <td className="px-4 py-3 font-medium text-theme-text">{req.description}</td>
+                                            <td className="px-4 py-3">
+                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                                                    req.criticality === 'Mandatory' ? 'bg-red-500/10 text-red-500' : 
+                                                    req.criticality === 'Desirable' ? 'bg-orange-500/10 text-orange-500' : 'bg-green-500/10 text-green-500'
+                                                }`}>
+                                                    {req.criticality}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 text-right text-xs text-theme-muted">{req.sourceReference}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-theme-muted p-10">
+                            <ShieldAlert className="w-12 h-12 mb-4 opacity-20" />
+                            <p>Bu analizde ayrıştırılmış gereksinim bulunamadı.</p>
+                            <p className="text-xs opacity-50 mt-2">Dökümanı yeniden analiz etmeyi deneyin.</p>
+                        </div>
+                    )}
+                </div>
             ) : (
                 <div className="flex flex-col h-full">
                    {/* Search Bar / Bulk Control Bar */}
@@ -406,7 +309,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
 
                                {waitingForNext ? (
                                   <button 
-                                    onClick={handleNextBulkStep}
+                                    onClick={() => handleNextStep(bulkPrefs)}
                                     className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-lg flex items-center shadow-lg transition-all animate-pulse"
                                   >
                                     <CheckCircle2 className="w-4 h-4 mr-2" />
@@ -421,7 +324,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                                )}
                                
                                <button 
-                                 onClick={handleStopBulk}
+                                 onClick={stopBulkSession}
                                  className="p-2 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                                  title="Durdur"
                                >
@@ -492,4 +395,5 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
   );
 };
 
+export default ResultView;
 export default ResultView;
