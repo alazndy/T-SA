@@ -7,6 +7,13 @@
 
 **T-SA**, karmaşık teknik şartnameleri (PDF/DOCX) yapay zeka destekli olarak analiz eden, ürün listelerini otomatik ayrıştıran, piyasa araştırması yapan ve teknik uygunluk denetimi sağlayan yeni nesil bir **Teknik Satın Alma Asistanıdır.**
 
+## Current Status
+
+- **Version**: 2.0.0 (MVP)
+- **Status**: Stable & Active
+- **Integration**: Fully integrated with Google Gemini API.
+- **Next Steps**: Integration with UPH for direct task creation.
+
 ---
 
 ## 🚀 Özellikler
