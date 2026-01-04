@@ -1,208 +1,95 @@
-# 🏗️ T-SA (Turhan Şartname Analizi)
+# T-SA: Technical Specification Analysis
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Tech](https://img.shields.io/badge/AI-Gemini%201.5%20Pro-orange.svg)
-![Stack](https://img.shields.io/badge/React-TypeScript-blue)
+![Status](https://img.shields.io/badge/Status-Beta-amber) ![License](https://img.shields.io/badge/License-MIT-green) ![Tech](https://img.shields.io/badge/Tech-React%20%7C%20Gemini%20AI%20%7C%20Vite-F59E0B)
 
-**T-SA**, karmaşık teknik şartnameleri (PDF/DOCX) yapay zeka destekli olarak analiz eden, ürün listelerini otomatik ayrıştıran, piyasa araştırması yapan ve teknik uygunluk denetimi sağlayan yeni nesil bir **Teknik Satın Alma Asistanıdır.**
+**T-SA** (Technical Specification Analysis) is an intelligent document processing tool powered by **Google Gemini 1.5**. It automates the tedious task of reading, parsing, and verifying complex technical specifications, bidding documents, and compliance sheets.
 
-## Current Status
+## 🚀 Capabilities & Features
 
-- **Version**: 2.0.0 (MVP)
-- **Status**: Stable & Active
-- **Integration**: Fully integrated with Google Gemini API.
-- **Next Steps**: Integration with UPH for direct task creation.
+### 🤖 AI-Powered Analysis
 
----
+- **Gemini 1.5 Pro Integration**: Uses advanced LLMs to "read" technical documents as a human engineer would.
+- **Requirement Extraction**: Automatically identifies and lists "Must-Haves", "Should-Haves", and strict compliance clauses.
+- **Context Awareness**: Understands engineering terminology and specification hierarchies.
 
-## 🚀 Özellikler
+### 📄 Multi-Format Ingestion
 
-### 🧠 1. Akıllı Doküman Analizi (Smart Parsing)
+- **PDF Processing**: OCR-like text extraction and structural parsing of PDF spec sheets.
+- **Excel/Word Support**: Native handling of `.xlsx` and `.docx` files commonly used in bidding.
+- **Bulk Analysis**: Upload multiple related documents (e.g., "General Specs", "Electrical Specs", "Mechanical Specs") for a holistic review.
 
-- **Format Desteği:** PDF ve DOCX formatındaki ham teknik metinleri okur.
-- **Yapılandırılmış Veri:** Metin yığınlarını; Ürün Adı, Miktar, Kategorizasyon ve Teknik Özellikler (Parametre/Değer/Birim) olarak yapılandırılmış JSON verisine dönüştürür.
-- **Genel Hükümler:** Garanti, Bakım, Eğitim ve Lojistik gibi teknik olmayan idari şartları ayrı bir bölümde toplar.
+### 🔍 Compliance Matrix Generation
 
-### 🔄 2. İteratif (Konsensus) Analiz Modu
+- **Auto-Matrix**: Generates a line-by-line compliance table (Excel exportable) ready for bid submission.
+- **Gap Analysis**: Highlights missing or vague requirements in your current proposal vs. the client's spec.
+- **Confidence Scoring**: AI assigns a confidence score to each extracted requirement.
 
-- **Çoklu Doğrulama:** Tek bir analizle yetinmez. Belgeyi belirlediğiniz sayıda (örn: 3 kez) farklı "seed" değerleriyle analiz eder.
-- **Birleştirme (Merge):** Farklı analiz sonuçlarını "Consensus Prompt" ile birleştirerek halüsinasyonları eler ve %99 doğruluk oranına ulaşır.
+### 📊 Reporting & Export
 
-### 🌍 3. Canlı Piyasa Araştırması (Google Grounding)
+- **PDF Reports**: Detailed analysis summaries with executive highlights.
+- **Excel Export**: Clean, structured data exports for integration with UPH or ENV-I.
 
-- **Gerçek Zamanlı Veri:** Gemini'nin Google Arama yeteneğini kullanarak, analiz edilen ürünler için **güncel** tedarikçi, distribütör ve fiyat bilgisi arar.
-- **Stratejik Arama:** "En Ucuz", "En Kaliteli", "Hızlı Temin" veya "Dengeli" gibi stratejilere göre arama yapar.
-- **Toplu İşlem (Bulk Mode):** 100 kalemlik bir listeyi tek tuşla sırayla tarar ve raporlar. Otomatik ilerleme (Auto-Advance) özelliği mevcuttur.
+## 🛠️ Technology Architecture
 
-### ⚖️ 4. Gereksinim Analizi ve Uyumluluk Matrisi (Compliance Matrix) 🆕
+- **Frontend**: **React 19** + **Vite**.
+- **AI Engine**: **Google Generative AI SDK** (Gemini Pro/Flash models).
+- **Document Processing**:
+  - `pdfjs-dist` for PDF rendering and text parsing.
+  - `xlsx` (SheetJS) for spreadsheet manipulation.
+- **Styling**: Tailwind CSS.
 
-- **Akıllı Ayrıştırma:** Şartnamedeki "meli/malı" (shall/must) içeren zorunlu hükümleri ürün listesinden ayrı olarak çıkarır.
-- **Kategorizasyon:** Gereksinimleri Kategorik (Genel, Sertifika, Test vb.) ve Önem Derecesine (Zorunlu, Tercih Sebebi) göre sınıflandırır.
-- **İzlenebilirlik:** Hangi gereksinimin dokümanın neresinde (Ref ID) geçtiğini gösterir.
-
-### 🌉 5. T-Ecosystem Entegrasyonu (UPH Köprüsü) 🆕
-
-- **Proje Görev Dönüşümü:** Çıkarılan ürünleri ve gereksinimleri, tek tıklamayla **Universal Project Hub (UPH)** uyumlu JSON görev paketine dönüştürür.
-- **Veri Aktarımı:** Analiz sonuçlarını doğrudan proje yönetim sürecine "Todo" listesi olarak aktarır.
-
-### 🧪 6. Datasheet Uyumluluk Denetimi (QA/QC)
-
-- **Otomatik Karşılaştırma:** Tedarikçiden gelen PDF/DOCX formatındaki ürün kataloğunu veya datasheet'i sisteme yükleyin.
-- **Gap Analizi:** Sistem, orijinal şartname maddeleri ile yüklenen dosyadaki değerleri satır satır kıyaslar.
-- **Sonuç Raporu:** ✅ Uygun, ⚠️ Kısmi Uygun veya ❌ Uygun Değil şeklinde görsel bir matris sunar.
-
-### 📧 7. RFQ (Teklif İsteme) Otomasyonu
-
-- **Profesyonel İletişim:** Seçilen ürünün teknik detaylarını içeren, kurumsal dilde yazılmış bir "Teklif Talep E-postası" (RFQ) taslağı oluşturur.
-
-### 💾 8. Veri Yönetimi ve Dışa Aktarım
-
-- **Raporlama:** PDF, Excel ve ZIP formatında çıktılar.
-
----
-
-## 🛠️ Teknoloji Yığını
-
-Proje **Client-Side (Sunucusuz)** mimari ile geliştirilmiştir. Tüm AI işlemleri doğrudan tarayıcı üzerinden Google API'larına bağlanır.
-
-| Alan             | Teknoloji            | Açıklama                               |
-| :--------------- | :------------------- | :------------------------------------- |
-| **Frontend**     | React 19, TypeScript | Ana uygulama çatısı.                   |
-| **UI Framework** | Tailwind CSS         | Stil ve Responsive tasarım.            |
-| **AI Engine**    | Google GenAI SDK     | Gemini 1.5 Pro & Flash modelleri.      |
-| **State Mgmt**   | React Hooks          | Context API ve yerel state yönetimi.   |
-| **Database**     | IndexedDB (idb)      | Tarayıcı tabanlı kalıcı veri saklama.  |
-| **File Parsing** | Mammoth.js           | .docx dosyalarını HTML/Text'e çevirir. |
-| **Export**       | JSPDF, XLSX, JSZip   | Rapor oluşturma kütüphaneleri.         |
-| **Icons**        | Lucide React         | Modern ikon seti.                      |
-
----
-
-## ⚙️ Kurulum ve Çalıştırma
-
-Bu projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin.
-
-### Ön Gereksinimler
-
-- Node.js (v18 veya üzeri)
-- Google AI Studio'dan alınmış bir **API KEY**. ([Buradan alabilirsiniz](https://aistudio.google.com/))
-
-### Adım 1: Depoyu Klonlayın
+## 📂 Project Structure
 
 ```bash
-git clone https://github.com/username/t-sa-analyst.git
-cd t-sa-analyst
+code/src/
+├── components/
+│   ├── Upload/      # Drag-and-drop file handlers
+│   ├── Results/     # Analysis visualization
+│   └── Diff/        # Compare multiple specs (diffing)
+├── services/
+│   ├── geminiService.ts # AI prompt engineering & API calls
+│   └── parser.ts        # File type specific parsers
+└── types/           # Spec & Requirement data models
 ```
 
-### Adım 2: Bağımlılıkları Yükleyin
+## 🏁 Getting Started
 
-Proje bir React projesi olduğu için gerekli paketleri yükleyin:
+### Prerequisites
 
-```bash
-npm install
-# veya
-yarn install
-```
+- Node.js (v18+)
+- pnpm
+- Google Gemini API Key
 
-### Adım 3: Ortam Değişkenlerini Ayarlayın
+### Installation
 
-Ana dizinde `.env` dosyası oluşturun (veya mevcutsa düzenleyin) ve API anahtarınızı ekleyin:
+1.  **Clone the repository**
 
-```env
-REACT_APP_API_KEY=AIzaSy...Sizin_Gemini_Api_Keyiniz
-# veya Vite kullanıyorsanız:
-VITE_API_KEY=AIzaSy...
-```
+    ```bash
+    git clone https://github.com/alazndy/T-SA.git
+    cd T-SA/code
+    ```
 
-> **Not:** Kod içerisinde `process.env.API_KEY` kullanıldığı varsayılmıştır. Build aracınıza göre (Webpack/Vite) bu değişkenin tanımlanma şekli değişebilir.
+2.  **Install Dependencies**
 
-### Adım 4: Uygulamayı Başlatın
+    ```bash
+    pnpm install
+    ```
 
-```bash
-npm start
-```
+3.  **Configuration**
+    Create a `.env` file:
 
-Tarayıcınızda `http://localhost:3000` adresine gidin.
+    ```env
+    VITE_GEMINI_API_KEY=your_api_key_here
+    ```
+
+4.  **Run Development Server**
+
+    ```bash
+    pnpm dev
+    ```
+
+    Open [http://localhost:5173](http://localhost:5173) to use the analyzer.
 
 ---
 
-## 📖 Kullanım Kılavuzu
-
-### 1. Belge Yükleme
-
-- Ana ekrandaki alana PDF veya DOCX dosyanızı sürükleyin.
-- **İpucu:** Eğer belge çok uzunsa (100+ sayfa), "Sayfa Aralığı" kutusuna `1-10` yazarak sadece ilgili sayfaları analiz ettirebilirsiniz.
-- **Hassas Analiz:** Daha kritik işler için "Hassas Analiz" modunu açın ve tekrar sayısını (örn: 3x) seçin.
-
-### 2. Sonuçları İnceleme
-
-- Analiz bitince ekran ikiye bölünür. Solda PDF önizlemesi, sağda analiz sonuçları (Ürün Kartları) yer alır.
-- Ürün kartlarına tıklayarak teknik özellikleri detaylıca görebilir, `Düzenle` butonu ile manuel düzeltme yapabilirsiniz.
-
-### 3. Piyasa Araştırması
-
-- Bir ürün kartının altındaki **"Piyasa Ara"** butonuna basın.
-- Açılan pencereden bölge (Global/TR) ve strateji (Fiyat/Kalite) seçin.
-- Yapay zeka interneti tarayarak size gerçek ürün önerileri ve linkler sunacaktır.
-
-### 4. Datasheet Kıyaslama
-
-- Ürün kartındaki **"Kıyasla"** butonuna basın.
-- Tedarikçiden gelen `.pdf` dosyasını yükleyin.
-- Sistem, "Şartnamede İstenen: 10 Bar" vs "Datasheet'te Olan: 8 Bar" şeklinde bir tablo çıkaracak ve uygunsuzluğu raporlayacaktır.
-
----
-
-## 📂 Proje Yapısı
-
-```
-src/
-├── components/          # React Bileşenleri
-│   ├── FileUpload.tsx   # Dosya yükleme ve ayarlar
-│   ├── ProductCard.tsx  # Ürün detay kartı ve düzenleme
-│   ├── ResultView.tsx   # Ana sonuç ekranı ve filtreleme
-│   ├── MarketAnalysisModal.tsx # Piyasa araştırma penceresi
-│   ├── DatasheetComparisonModal.tsx # Uyumluluk kontrol penceresi
-│   └── RFQModal.tsx     # E-posta oluşturucu
-├── services/            # İş Mantığı ve API Servisleri
-│   ├── geminiService.ts # Google AI ile iletişim (Core Logic)
-│   ├── dbService.ts     # IndexedDB veritabanı işlemleri
-│   ├── exportService.ts # PDF/Excel çıktı üretimi
-│   ├── fileParsing.ts   # Dosya okuma yardımcıları
-│   └── prompts.ts       # AI Sistem Promptları (Prompts Engineering)
-├── types.ts             # TypeScript arayüzleri
-├── App.tsx              # Ana uygulama girişi
-└── index.tsx            # Render noktası
-```
-
----
-
-## 🧠 Prompt Mühendisliği Detayları
-
-T-SA'nın gücü, `services/prompts.ts` dosyasında tanımlanan gelişmiş sistem talimatlarından gelir.
-
-- **ANALYSIS_SYSTEM_PROMPT:** Modelin bir "Teknik Şartname Analisti" gibi davranmasını sağlar. Veri kaybını önlemek için katı kurallar içerir.
-- **MARKET_SEARCH_PROMPT:** Modelin "Endüstriyel Satınalma Uzmanı" rolüne bürünerek hayali ürünler uydurmasını engeller, sadece kanıtlanabilir (linki olan) ürünleri listeler.
-- **DATASHEET_COMPARE_PROMPT:** Model "Tavizsiz bir QA Mühendisi" olur. "Yaklaşık olarak uyar" gibi yorumları reddeder, kesin veri eşleşmesi arar.
-
----
-
-## ⚠️ Önemli Notlar
-
-- **API Kotası:** Ücretsiz Gemini API kullanıyorsanız dakikalık istek limitlerine (RPM) takılabilirsiniz. Uygulama içinde "Retry" (Yeniden Deneme) mekanizması mevcuttur.
-- **Gizlilik:** Yüklenen dosyalar sunucuya gönderilmez, doğrudan Google API'sına iletilir. Google'ın veri işleme politikaları geçerlidir. Kurumsal veriler için Google Cloud Vertex AI (Private) kullanımı önerilir (Bu sürüm Public API kullanır).
-
----
-
-## 🤝 Katkıda Bulunma
-
-1.  Forklayın.
-2.  Özellik dalı oluşturun (`git checkout -b feature/YeniOzellik`).
-3.  Değişikliklerinizi commit edin (`git commit -m 'Yeni özellik eklendi'`).
-4.  Dala push yapın (`git push origin feature/YeniOzellik`).
-5.  Bir Pull Request açın.
-
----
-
-**Made with ❤️ by G.T**
+Part of the **T-Ecosystem**.
