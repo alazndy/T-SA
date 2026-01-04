@@ -81,7 +81,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                     <Globe className="w-5 h-5 mr-2 text-neon-blue" />
                     Toplu Pazar Analizi
                  </h3>
-                 <button onClick={() => setShowBulkConfig(false)} className="text-theme-muted hover:text-theme-text"><X className="w-5 h-5"/></button>
+                 <button onClick={() => setShowBulkConfig(false)} title="Close" className="text-theme-muted hover:text-theme-text"><X className="w-5 h-5"/></button>
               </div>
               <div className="p-6 space-y-4">
                  <div className="bg-neon-blue/5 border border-neon-blue/10 rounded-lg p-3 text-xs text-theme-secondary">
@@ -93,6 +93,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                     <select 
                       value={bulkPrefs.region}
                       onChange={(e) => setBulkPrefs({...bulkPrefs, region: e.target.value})}
+                      title="Select Region"
                       className="w-full bg-theme-input border border-theme-border rounded-lg p-2.5 text-sm outline-none focus:border-neon-blue"
                     >
                        <option value="Global">Global</option>
@@ -137,7 +138,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
             </span>
             <span className="text-xs font-mono text-theme-muted truncate max-w-[150px]">{result.fileName}</span>
          </div>
-         <div className="flex-grow bg-zinc-100 dark:bg-zinc-900 relative">
+         <div className="grow bg-zinc-100 dark:bg-zinc-900 relative">
            {pdfUrl ? (
              <object data={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1`} type="application/pdf" className="w-full h-full">
                <div className="flex items-center justify-center h-full text-theme-muted text-sm">Önizleme yüklenemedi.</div>
@@ -193,13 +194,13 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
         </div>
 
         {/* Content Area */}
-        <div className="flex-grow lg:overflow-hidden flex flex-col glass-panel rounded-xl border border-theme-border bg-theme-panel/50 relative">
+        <div className="grow lg:overflow-hidden flex flex-col glass-panel rounded-xl border border-theme-border bg-theme-panel/50 relative">
             
             {comparingProduct && (
                <div className="absolute inset-0 z-20 bg-theme-bg flex flex-col animate-fade-in">
                   <div className="flex items-center justify-between p-4 border-b border-theme-border bg-theme-surface">
                      <div className="flex items-center gap-3">
-                        <button onClick={() => setComparingProduct(null)} className="p-1 hover:bg-theme-input rounded"><ChevronLeft className="w-5 h-5"/></button>
+                        <button onClick={() => setComparingProduct(null)} title="Back" className="p-1 hover:bg-theme-input rounded"><ChevronLeft className="w-5 h-5"/></button>
                         <span className="font-bold text-sm">Datasheet Kıyaslama: {comparingProduct.name}</span>
                      </div>
                   </div>
@@ -301,6 +302,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                                   </div>
                                   <button
                                     onClick={() => setAutoAdvance(!autoAdvance)}
+                                    title="Toggle Auto Advance"
                                     className={`w-8 h-4 rounded-full transition-colors relative flex items-center ${autoAdvance ? 'bg-green-500' : 'bg-theme-border'}`}
                                   >
                                     <div className={`absolute w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-200 ${autoAdvance ? 'translate-x-4' : 'translate-x-0.5'}`} />
@@ -344,11 +346,11 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                                   value={searchTerm}
                                   onChange={(e) => setSearchTerm(e.target.value)}
                                 />
-                                {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute right-3 top-2.5 text-theme-muted hover:text-theme-text"><X className="w-4 h-4"/></button>}
+                                {searchTerm && <button onClick={() => setSearchTerm('')} title="Clear Search" className="absolute right-3 top-2.5 text-theme-muted hover:text-theme-text"><X className="w-4 h-4"/></button>}
                              </div>
                              
                              <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar items-center">
-                                <select className="bg-theme-input border border-theme-border text-xs rounded px-2 py-1.5 outline-none" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                                <select className="bg-theme-input border border-theme-border text-xs rounded px-2 py-1.5 outline-none" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} title="Select Category">
                                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
                                 </select>
                                 <button onClick={() => setShowCriticalOnly(!showCriticalOnly)} className={`px-3 py-1.5 rounded text-xs border font-medium ${showCriticalOnly ? 'bg-red-500/10 border-red-500/30 text-red-500' : 'bg-theme-input border-theme-border text-theme-secondary'}`}>Kritik</button>
@@ -366,7 +368,7 @@ const ResultView: React.FC<ResultViewProps> = ({ result, onReset, onSave, pdfUrl
                    </div>
 
                    {/* List */}
-                   <div className="flex-grow overflow-y-auto custom-scrollbar p-4 space-y-3 bg-zinc-50/50 dark:bg-black/20">
+                   <div className="grow overflow-y-auto custom-scrollbar p-4 space-y-3 bg-zinc-50/50 dark:bg-black/20">
                       {filteredProducts.length > 0 ? (
                         filteredProducts.map(p => (
                            <div key={p.id} className={`transition-all duration-300 ${isBulkAnalyzing && currentAnalyzingId === p.id ? 'scale-[1.02] z-10' : ''} ${isBulkAnalyzing && p.id !== currentAnalyzingId && p.id !== bulkQueue[bulkIndex]?.id ? 'opacity-50 blur-[1px]' : ''}`}>

@@ -72,9 +72,9 @@ export function LegalModal({ isOpen, onClose, defaultTab = 'privacy' }: LegalMod
              animate={{ opacity: 1 }} 
              exit={{ opacity: 0 }}
              onClick={onClose}
-             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999]" 
+             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-9999" 
            />
-           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+           <div className="fixed inset-0 z-9999 flex items-center justify-center p-4">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -89,6 +89,7 @@ export function LegalModal({ isOpen, onClose, defaultTab = 'privacy' }: LegalMod
                       </h2>
                       <button 
                         onClick={onClose}
+                        title="Close"
                         className="rounded-full p-2 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
                       >
                           <X size={20} />
@@ -126,7 +127,7 @@ export function LegalModal({ isOpen, onClose, defaultTab = 'privacy' }: LegalMod
                                   if (line.startsWith('## ')) return <h2 key={i} className="text-xl font-bold mt-4 mb-2 text-zinc-100">{line.replace('## ', '')}</h2>;
                                   if (line.startsWith('### ')) return <h3 key={i} className="text-lg font-bold mt-3 mb-1 text-zinc-200">{line.replace('### ', '')}</h3>;
                                   if (line.startsWith('**') && line.endsWith('**')) return <strong key={i} className="text-white">{line.replace(/\*\*/g, '')}</strong>;
-                                  if (line.startsWith('- ')) return <li key={i} className="ml-4 list-disc marker:text-emerald-500">{line.replace('- ', '')}</li>;
+                                  if (line.startsWith('- ')) return <div key={i} className="ml-4 flex items-start text-zinc-400"><span className="mr-2 text-emerald-500 shrink-0">•</span><span>{line.replace('- ', '')}</span></div>;
                                   if (line.trim().match(/^\d+\./)) return <div key={i} className="mb-2 font-medium text-white">{line}</div>;
                                   if (line.trim() === '') return <br key={i} />;
                                   return <p key={i} className="mb-2 text-zinc-400">{line}</p>;
